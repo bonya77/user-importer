@@ -35,7 +35,7 @@
 ---
 
 ## 4 июля, Суббота
-🕒 **19:00 – 21:00 (мск+4)**  
+🕒 **15:00 – 17:00 (мск+4)**  
 📚 *Spring Data JPA* - JDBC / Data Source / JdbcTemplate / Trancsactional / Spring Data JPA / live-coding
 💬 *Консультации кураторов* — весь день в Mattermost
 
@@ -43,7 +43,7 @@
 
 ## 6 июля, Понедельник
 🕒 **19:00 – 21:00 (мск+4)**  
-📚 *Spring Boot. Как работает внутри* - Bean / Внутрянка Spring / Конфигурация, стартеры
+📚 *Docker*
 💬 *Консультации кураторов* — весь день в Mattermost
 
 ---
