@@ -188,6 +188,7 @@ docker-compose down
 * Docker: для работы с Docker
 * Lombok: для поддержки Lombok
 * MapStruct Support: для поддержки MapStruct
+* Simple OpenAPI Preview: для просмотра документации API
 
 3. Перезапустите IDE после установки.
 
