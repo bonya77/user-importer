@@ -128,7 +128,7 @@
 
 ### PostgreSQL
 
-- Хост: postgres
+- Хост: локально: localhost (через pgAdmin: postgres)
 - Порт: 5432
 - База данных: mydb
 - Пользователь: admin
@@ -205,7 +205,7 @@ docker-compose down
 ### Установка вручную
 1. Скачайте pgAdmin с [официального сайта](https://www.pgadmin.org/download/) и установите.
 2. Запустите pgAdmin и создайте новое подключение:
-* Host name/address: localhost
+* Host name/address: postgres
 * Port: 5432 (по умолчанию)
 * Username и Password: указаны в docker-compose.yml
 3. Нажмите Save и подключитесь. Вы увидите базу данных в дереве слева.
