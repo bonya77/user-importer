@@ -47,7 +47,7 @@
 
 ## 2. Установка IntelliJ IDEA
 
-1. Скачайте IntelliJ IDEA Ultimate версию c [официального сайта JetBrains](https://www.jetbrains.com/idea/download/?section=windows) и установите.
+1. Скачайте IntelliJ IDEA Ultimate версию c [официального сайта JetBrains](https://www.jetbrains.com/idea/download/?section=windows) и установите. Если нет возможности установить Ultimate, можно установить Community версию или OpenIDE с [оффициального сайта](https://openide.ru/)
 2. Запустите IntelliJ IDEA.
 
 ---
