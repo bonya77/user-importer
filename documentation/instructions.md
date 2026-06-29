@@ -128,7 +128,7 @@
 
 ### PostgreSQL
 
-- Хост: localhost
+- Хост: postgres
 - Порт: 5432
 - База данных: mydb
 - Пользователь: admin
