@@ -1,69 +1,76 @@
 package ru.shift.userimporter.core.util;
 
+import lombok.experimental.UtilityClass;
+import ru.shift.userimporter.core.exception.EmptyFileException;
 import ru.shift.userimporter.core.exception.FileProcessingException;
+import ru.shift.userimporter.core.exception.FileReadException;
 import ru.shift.userimporter.core.model.FileEntity;
 import ru.shift.userimporter.core.model.ProcessingError;
 import ru.shift.userimporter.core.model.Status;
 import ru.shift.userimporter.core.model.UserEntity;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.*;
-import java.nio.Buffer;
+import java.lang.reflect.Array;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+@UtilityClass
 public class FileProcessor {
-    private final List<ProcessingError> processingErrors = new ArrayList<>();
-    private final List<UserEntity> userEntities = new ArrayList<>();
 
-    List<ProcessingError> getProcessingErrors(){
-        return processingErrors;
-    }
-
+    private static final int EXPECTED_LINE_ARGS = 6;
     //сделать валидацию
-    public void processFile(FileEntity fileEntity) throws Exception {
+    public ProcessingResult processFile(FileEntity fileEntity) throws FileProcessingException {
+
+         ProcessingResult processingResult = new ProcessingResult();
 
         fileEntity.setProcessingStatus(Status.IN_PROGRESS);
         int lineNumber = 0;
         int invalidRows = 0;
+        int validRows = 0;
         String filePath = fileEntity.getStoragePath();
 
         try(BufferedReader fileReader = new BufferedReader(new FileReader(filePath))){
             String line = fileReader.readLine();
             if(line == null){
                 fileEntity.setProcessingStatus(Status.FAILED);
-                throw new FileProcessingException("File with hash " + fileEntity.getHash()+
+                throw new EmptyFileException("File with hash " + fileEntity.getHash()+
                         "is empty");
             }
             while(line != null){
                 lineNumber++;
-                UserEntity userEntity = createEntity(line, lineNumber, fileEntity);
+                UserEntity userEntity = createEntity(line, lineNumber, fileEntity, processingResult);
                 if(userEntity == null){
-                    line = fileReader.readLine();
-                    invalidRows += 1;
-                    continue;
+                    invalidRows++;
                 }
-                userEntities.add(userEntity);
+                else{
+                    processingResult.getUserEntities().add(userEntity);
+                    validRows++;
+                }
                 line = fileReader.readLine();
             }
             fileEntity.setProcessingStatus(Status.DONE);
-            fileEntity.setProcessedRows(lineNumber - invalidRows);
+            fileEntity.setProcessedRows(lineNumber);
             fileEntity.setInvalidRows(invalidRows);
+            fileEntity.setValidRows(validRows);
             fileEntity.setTotalRows(lineNumber);
+
+            return processingResult;
         }
 
         catch(IOException e){
             fileEntity.setProcessingStatus(Status.FAILED);
-            throw new FileProcessingException("error in the process of reading the file");
+            throw new FileReadException("error in the process of reading the file " + filePath + e.getMessage());
         }
     }
 
     //добваить валидацию, если пропущено обязательное поле выкидываем эксепшен с соответствующим описанием
-    public UserEntity createEntity(String entityString, int lineNumber, FileEntity fileEntity){
+    private UserEntity createEntity(String entityString, int lineNumber, FileEntity fileEntity,
+                                    ProcessingResult processingResult){
         String[] entityFields = entityString.split(",");
-        if(isFieldMissed(entityFields)){
+        ArrayList<Integer> missedFields = findMissedFields(entityFields);
+        if(!missedFields.isEmpty()){
             Map<Integer, String> fieldMap = Map.of(
                     0, "lastName",
                     1, "firstName",
@@ -73,19 +80,17 @@ public class FileProcessor {
                     5, "birthDate"
             );
 
-            StringBuilder errorMessage = new StringBuilder("in line" + lineNumber + "lines: ");
-            for(int i = 0; i < 6; i++){
-                if(entityFields[i] == null || entityFields[i].trim().isEmpty()){
-                    errorMessage.append(fieldMap.get(i)).append(", ");
-                }
-
+            StringBuilder errorMessage = new StringBuilder("in line" + lineNumber + "fields: ");
+            for(int i = 0; i < missedFields.size(); i++){
+                errorMessage.append(fieldMap.get(i)).append(", ");
             }
-            errorMessage.append("wasnt found");
+
+            errorMessage.append("wasn't found");
             String StringErrorMessage = errorMessage.toString();
             ProcessingError processingError = new ProcessingError(null, fileEntity.getId(),
                     lineNumber, StringErrorMessage, entityString);
 
-            processingErrors.add(processingError);
+            processingResult.getProcessingErrors().add(processingError);
 
             return null;
         }
@@ -99,7 +104,17 @@ public class FileProcessor {
             userEntity.setMiddleName(entityFields[2].trim());
             userEntity.setEmail(entityFields[3].trim());
             userEntity.setPhone(entityFields[4].trim());
-            userEntity.setBirthDate(LocalDate.parse(entityFields[5]));
+            try{
+                userEntity.setBirthDate(LocalDate.parse(entityFields[5]));
+            }
+            catch(DateTimeException e){
+                processingResult.getProcessingErrors().add(ProcessingError.builder().
+                        fileId(fileEntity.getId()).
+                        rowNumber(lineNumber).
+                        errorMessage(e.getMessage()).
+                        rawData(entityString).build());
+            }
+
             userEntity.setCreatedAt(LocalDate.now());
             userEntity.setUpdatedAt(LocalDate.now());
 
@@ -107,15 +122,14 @@ public class FileProcessor {
         }
     }
 
-    boolean isFieldMissed(String[] entityFields){
-        for(String str : entityFields){
-            if(str == null || str.trim().isEmpty()){
-                return true;
+    ArrayList<Integer> findMissedFields(String[] entityFields){
+        ArrayList<Integer> missedIndexes = new ArrayList<>();
+        for (int i = 0; i < EXPECTED_LINE_ARGS; i++){
+            if(i >= entityFields.length || entityFields[i] == null || entityFields[i].trim().isEmpty()){
+                missedIndexes.add(i);
             }
         }
-        return false;
+        return missedIndexes;
     }
-
-
 
 }

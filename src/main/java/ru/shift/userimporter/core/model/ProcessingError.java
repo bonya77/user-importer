@@ -7,6 +7,7 @@ import lombok.*;
 @Table(name = "file_processing_errors")
 @Getter
 @Setter
+@Builder
 @RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
