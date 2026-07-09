@@ -16,8 +16,7 @@ public class ProcessingError {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "file_id")
+    @Column(name = "file_id", nullable = false)
     private Long fileId;
 
     @Column(name = "row_number", nullable = false)

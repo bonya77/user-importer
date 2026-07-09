@@ -38,15 +38,14 @@ public class UserEntity {
 
     @NotBlank
     @Email(message = "incorrect email")
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @Size(max = 100, message = "email can't be longer then 100 symbols")
     private String email;
 
-    @Pattern(regexp = "^\\d{11}$$", message = "incorrect phone number")
+    @Pattern(regexp = "^\\d{11}$", message = "incorrect phone number")
     @Column(nullable = false, unique = true, length = 11)
     private String phone;
 
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "incorrect birthDate")
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 

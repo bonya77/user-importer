@@ -23,7 +23,7 @@ public class FileService {
 
     @Transactional
     public FileEntity uploadFile(FileEntity fileEntity) {
-        if (fileRepository.existsByHash(fileEntity)) {
+        if (fileRepository.existsByHash(fileEntity.getHash())) {
             throw new RuntimeException("File with hash" + fileEntity.getHash() +
                     "already exist");
         }
@@ -33,7 +33,7 @@ public class FileService {
     @Transactional
     public boolean deleteFile(FileEntity fileEntity) {
         boolean operationStatus = false;
-        if (!fileRepository.existsByHash(fileEntity)) {
+        if (!fileRepository.existsByHash(fileEntity.getHash())) {
             throw new RuntimeException("File with Hash" + fileEntity.getHash() +
                     "doesnt exist");
         } else {
@@ -76,10 +76,7 @@ public class FileService {
 
     @Transactional
     public FileEntity findFileById(Long id){
-        if(!fileRepository.existsById(id)){
-            return null;
-        }
-        return fileRepository.findByFileId(id);
+        return fileRepository.findById(id).orElse(null);
     }
 
 }

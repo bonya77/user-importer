@@ -73,7 +73,7 @@ public class FileProcessor {
     //добваить валидацию, если пропущено обязательное поле выкидываем эксепшен с соответствующим описанием
     private UserEntity createEntity(String entityString, int lineNumber, FileEntity fileEntity,
                                     ProcessingResult processingResult){
-        String[] entityFields = entityString.split(",");
+        String[] entityFields = entityString.split(",", -1);
         ArrayList<Integer> missedFields = findMissedFields(entityFields);
         if(!missedFields.isEmpty()){
             Map<Integer, String> fieldMap = Map.of(
@@ -87,7 +87,7 @@ public class FileProcessor {
 
             StringBuilder errorMessage = new StringBuilder("in line" + lineNumber + "fields: ");
             for(int i = 0; i < missedFields.size(); i++){
-                errorMessage.append(fieldMap.get(i)).append(", ");
+                errorMessage.append(fieldMap.get(i + 1)).append(", ");
             }
 
             errorMessage.append("wasn't found");
@@ -118,6 +118,7 @@ public class FileProcessor {
                         rowNumber(lineNumber).
                         errorMessage(e.getMessage()).
                         rawData(entityString).build());
+                return null;
             }
 
             userEntity.setCreatedAt(LocalDate.now());
