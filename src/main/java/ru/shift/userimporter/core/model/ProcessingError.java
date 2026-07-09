@@ -8,7 +8,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProcessingError {

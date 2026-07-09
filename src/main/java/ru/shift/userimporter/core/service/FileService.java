@@ -46,7 +46,7 @@ public class FileService {
 
 
     @Transactional
-    public void startFileProcessing(Long fileId) throws Exception {
+    public ProcessingResult startFileProcessing(Long fileId) throws Exception {
         if(!fileRepository.existsById(fileId)){
             throw new FileProcessingException("file with id" + fileId + "doesn't exist");
         }
@@ -67,10 +67,19 @@ public class FileService {
             }
 
             fileRepository.save(file);
+            return processingResult;
         }
         catch(FileProcessingException e){
             throw new FileProcessingException(e.getMessage());
         }
+    }
+
+    @Transactional
+    public FileEntity findFileById(Long id){
+        if(!fileRepository.existsById(id)){
+            return null;
+        }
+        return fileRepository.findByFileId(id);
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.Map;
 public class FileProcessor {
 
     private static final int EXPECTED_LINE_ARGS = 6;
-    //сделать валидацию
+
     public ProcessingResult processFile(FileEntity fileEntity) throws FileProcessingException {
 
          ProcessingResult processingResult = new ProcessingResult();
@@ -55,6 +55,11 @@ public class FileProcessor {
             fileEntity.setInvalidRows(invalidRows);
             fileEntity.setValidRows(validRows);
             fileEntity.setTotalRows(lineNumber);
+
+            processingResult.setTotalRows(lineNumber);
+            processingResult.setValidRows(validRows);
+            processingResult.setInvalidRows(invalidRows);
+            processingResult.setSuccess(true);
 
             return processingResult;
         }
@@ -122,7 +127,7 @@ public class FileProcessor {
         }
     }
 
-    ArrayList<Integer> findMissedFields(String[] entityFields){
+    private ArrayList<Integer> findMissedFields(String[] entityFields){
         ArrayList<Integer> missedIndexes = new ArrayList<>();
         for (int i = 0; i < EXPECTED_LINE_ARGS; i++){
             if(i >= entityFields.length || entityFields[i] == null || entityFields[i].trim().isEmpty()){

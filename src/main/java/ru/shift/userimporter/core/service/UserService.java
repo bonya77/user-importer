@@ -12,7 +12,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
-    List<UserEntity> getAllUsers(){
+    public List<UserEntity> getAllUsers(){
         return userRepository.findAll();
     }
 }
