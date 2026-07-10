@@ -10,6 +10,7 @@ import ru.shift.userimporter.core.repository.FileProcessingErrorsRepository;
 import ru.shift.userimporter.core.repository.FileRepository;
 import ru.shift.userimporter.core.repository.UserRepository;
 import ru.shift.userimporter.core.util.FileProcessor;
+import ru.shift.userimporter.core.util.FileStorageUtil;
 import ru.shift.userimporter.core.util.ProcessingResult;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class FileService {
     @Transactional
     public FileEntity uploadFile(FileEntity fileEntity) {
         if (fileRepository.existsByHash(fileEntity.getHash())) {
+            FileStorageUtil.deleteFileFromDisk(fileEntity.getStoragePath());
             throw new RuntimeException("File with hash" + fileEntity.getHash() +
                     "already exist");
         }

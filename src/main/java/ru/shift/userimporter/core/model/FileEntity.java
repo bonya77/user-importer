@@ -36,7 +36,7 @@ public class FileEntity {
     @Column(name = "processed_rows")
     private int processedRows;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "hash", nullable = false, unique = true)
     private String hash;
 
     @Column(name = "status", nullable = false)

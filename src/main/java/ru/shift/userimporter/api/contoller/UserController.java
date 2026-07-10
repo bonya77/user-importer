@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    @GetMapping
+    @GetMapping("/getUsers")
     public ResponseEntity<List<UserDto>> getAllUsers(){
         List<UserEntity> users = userService.getAllUsers();
         List<UserDto> usersDto = userMapper.toDtoList(users);
