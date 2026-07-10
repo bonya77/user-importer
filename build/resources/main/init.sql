@@ -14,7 +14,7 @@ middle_name VARCHAR(50)
                     length(middle_name) BETWEEN 3 AND 50
             )
         ),
-email       VARCHAR(100) NOT NULL
+email       VARCHAR(100) NOT NULL UNIQUE
     CONSTRAINT chk_email_domain CHECK (email ~* '^[A-Za-z0-9._%-]+@(shift\.com|shift\.ru)$'),
 phone       VARCHAR(11)  NOT NULL UNIQUE
     CONSTRAINT chk_phone_format CHECK (phone ~ '^7[0-9]{10}$'),
