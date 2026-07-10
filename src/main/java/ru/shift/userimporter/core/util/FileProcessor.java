@@ -70,7 +70,6 @@ public class FileProcessor {
         }
     }
 
-    //добваить валидацию, если пропущено обязательное поле выкидываем эксепшен с соответствующим описанием
     private UserEntity createEntity(String entityString, int lineNumber, FileEntity fileEntity,
                                     ProcessingResult processingResult){
         String[] entityFields = entityString.split(",", -1);

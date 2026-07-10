@@ -13,6 +13,7 @@ import ru.shift.userimporter.core.util.FileProcessor;
 import ru.shift.userimporter.core.util.FileStorageUtil;
 import ru.shift.userimporter.core.util.ProcessingResult;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,10 +34,11 @@ public class FileService {
     }
 
     @Transactional
-    public boolean deleteFile(FileEntity fileEntity) {
+    public boolean deleteFileById(Long id) {
         boolean operationStatus = false;
-        if (!fileRepository.existsByHash(fileEntity.getHash())) {
-            throw new RuntimeException("File with Hash" + fileEntity.getHash() +
+        FileEntity fileEntity = fileRepository.findById(id).orElse(null);
+        if (fileEntity == null) {
+            throw new RuntimeException("File with id"  + id +
                     "doesnt exist");
         } else {
             fileRepository.delete(fileEntity);
@@ -61,7 +63,9 @@ public class FileService {
             List<ProcessingError> processingErrors = processingResult.getProcessingErrors();
 
             if(!users.isEmpty()){
-                userRepository.saveAll(users);
+                for(UserEntity user : users){
+                    saveOrUpdateUser(user);
+                }
             }
 
             if(!processingErrors.isEmpty()){
@@ -76,9 +80,31 @@ public class FileService {
         }
     }
 
+    private void saveOrUpdateUser(UserEntity user){
+        userRepository.findByEmail(user.getEmail()).
+                ifPresentOrElse(existing -> {
+                    existing.setFirstName(user.getFirstName());
+                    existing.setLastName(user.getLastName());
+                    existing.setMiddleName(user.getMiddleName());
+                    existing.setPhone(user.getPhone());
+                    existing.setBirthDate(user.getBirthDate());
+                    existing.setUpdatedAt(LocalDate.now());
+                    userRepository.save(existing);
+                },  () -> userRepository.save(user));
+    }
+
     @Transactional
     public FileEntity findFileById(Long id){
         return fileRepository.findById(id).orElse(null);
     }
 
+    @Transactional
+    public List<FileEntity> findAllFiles(){
+        return fileRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteAllFiles(){
+        fileRepository.deleteAll();
+    }
 }
