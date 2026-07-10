@@ -11,7 +11,6 @@ import ru.shift.userimporter.api.mapper.FileInfoMapper;
 import ru.shift.userimporter.api.mapper.FileMapper;
 import ru.shift.userimporter.core.exception.FileProcessingException;
 import ru.shift.userimporter.core.model.FileEntity;
-import ru.shift.userimporter.core.repository.FileRepository;
 import ru.shift.userimporter.core.service.FileService;
 import ru.shift.userimporter.core.util.CreateFileEntityFromMultipart;
 import ru.shift.userimporter.core.dto.FileProcessingResultDto;
@@ -48,7 +47,6 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.PROCESSING).body(FileProcessingResultDto.error(e.getMessage()));
         }
         catch(Exception e){
-            e.printStackTrace();
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(FileProcessingResultDto.error("Internal server error"));
