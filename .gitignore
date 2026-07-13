@@ -11,3 +11,7 @@
 .gradle
 .idea
 /documentation/todo
+build/
+uploads/
+*.class
+*.log
